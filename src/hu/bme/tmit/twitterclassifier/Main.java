@@ -1,5 +1,6 @@
 package hu.bme.tmit.twitterclassifier;
 
+import hu.bme.tmit.twitterclassifier.db.SQLHelper;
 import hu.bme.tmit.twitterclassifier.logger.Logger;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class Main {
 		// The factory instance is re-useable and thread safe.
 		Twitter twitter = TwitterFactory.getSingleton();
 
-		for (int page = 1; page <= 10; page++) {
+		for (int page = 1; page <= 1; page++) {
 			Query query = new Query("#superbowl");
 			query.setCount(10);
 
@@ -94,9 +95,15 @@ public class Main {
 		log.d("Dunno: " + Dunno.size());
 		log.d("Seahwaks: " + Seahwaks.size());
 		log.d("Broncos: " + Broncos.size());
-
+		
+		
 		stopwatch.elapsed(TimeUnit.MICROSECONDS);
-
+		log.d(stopwatch.toString());
+		
+		SQLHelper sqlHelper = new SQLHelper();
+		sqlHelper.test();
+		
+		stopwatch.elapsed(TimeUnit.MICROSECONDS);
 		log.d(stopwatch.toString());
 
 	}

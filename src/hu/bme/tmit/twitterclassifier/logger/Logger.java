@@ -6,7 +6,8 @@ import java.util.Date;
 public class Logger {
 
 	private final String tag;
-	private static final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+	private static final SimpleDateFormat formatter = new SimpleDateFormat(
+			"HH:mm:ss:SSS");
 	public static final int VERBOSE = 1;
 	public static final int DEBUG = 2;
 	public static final int INFO = 3;
@@ -23,13 +24,19 @@ public class Logger {
 	}
 
 	private static void log(String tag, int lvl, String msg) {
-		if (lvl < LEVEL) return;
-		System.out.println(String.format(
-				"%-13s %-6s %-20s %-30s",
-				formatter.format(new Date()),
-				getLevelLabel(lvl),
-				tag,
-				msg));
+		if (lvl < LEVEL)
+			return;
+		if (lvl == ERROR) {
+			System.err
+					.println(String.format("%-13s %-6s %-20s %-30s",
+							formatter.format(new Date()), getLevelLabel(lvl),
+							tag, msg));
+		} else {
+			System.out
+					.println(String.format("%-13s %-6s %-20s %-30s",
+							formatter.format(new Date()), getLevelLabel(lvl),
+							tag, msg));
+		}
 	}
 
 	public static void setLevel(int level) {
