@@ -1,0 +1,15 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# autosave files#
+*~
+
+/bin/
+/lib/
+
+# twitter api keys... #
+twitter4j.properties
