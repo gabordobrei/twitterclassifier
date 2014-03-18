@@ -96,6 +96,7 @@ public class Main {
 		log.d("Broncos: " + Broncos.size());
 
 		stopwatch.elapsed(TimeUnit.MICROSECONDS);
+
 		log.d(stopwatch.toString());
 
 	}
