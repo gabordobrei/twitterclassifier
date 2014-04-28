@@ -11,3 +11,4 @@
 
 # twitter api keys... #
 twitter4j.properties
+*.log
