@@ -5,7 +5,7 @@ import com.google.common.base.Objects;
 public class TweetClass {
 	
 	private String name;
-	private int size;
+	private int size = 0;
 	private String description;
 
 	public TweetClass(String name, String description) {

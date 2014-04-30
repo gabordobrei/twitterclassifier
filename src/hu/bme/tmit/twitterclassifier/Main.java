@@ -1,25 +1,14 @@
 package hu.bme.tmit.twitterclassifier;
 
-import hu.bme.tmit.twitterclassifier.classifying‎.SimpleTweetClassifying‎;
-import hu.bme.tmit.twitterclassifier.classifying‎.TweetClassifying‎;
+import hu.bme.tmit.twitterclassifier.classifying.SimpleTweetClassifying;
+import hu.bme.tmit.twitterclassifier.classifying.TweetClassifying;
 import hu.bme.tmit.twitterclassifier.logger.Logger;
-import hu.bme.tmit.twitterclassifier.model.Collector;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import twitter4j.Query;
-import twitter4j.QueryResult;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
-
 import com.google.common.base.Stopwatch;
-import com.mysql.jdbc.log.Log;
 
 public class Main {
 
@@ -27,75 +16,79 @@ public class Main {
 
 	public static void main(String args[]) throws Exception {
 
-		if (args.length < 2) {
+		if (args.length < 3) {
 			printHelp();
 			exit();
 		}
-		String path = null;
+		String testPath = null, trainPath = null;
 		boolean debug = false;
 		for (int i = 0; i < args.length; i++) {
-			if ("-f".matches(args[i])) {
-				path = args[i + 1];
+			if ("-test".matches(args[i])) {
+				testPath = args[i + 1];
 			}
-			if ("-d".matches(args[i])) {
+			if ("-train".matches(args[i])) {
+				trainPath = args[i + 1];
+			}
+			if ("-debug".matches(args[i])) {
 				debug = Boolean.parseBoolean(args[i + 1]);
 			}
 		}
 
 		Logger.setLevel(Logger.DEBUG);
 		if (!debug) {
-			Logger.setLevel(Logger.ERROR);
-			log.setPrintStream(new PrintStream(new FileOutputStream(
-					"error.log", true)));
+			Logger.setLevel(Logger.INFO);
+			// log.setPrintStream(new PrintStream(new
+			// FileOutputStream("error.log", true)));
 		}
 
-		File tweetSource = new File(path);
-		if (!tweetSource.exists()) {
+		File testTweetSource = new File(testPath);
+		File trainTweetSource = new File(trainPath);
+		
+		if (!testTweetSource.exists() || !trainTweetSource.exists()) {
+			log.e("asdf");
 			printHelp();
 			exit();
 
 		}
-		if (!tweetSource.canRead()) {
+		if (!testTweetSource.canRead() || !trainTweetSource.canRead()) {
 			log.e("Cannot read file!");
 			exit();
 		}
 
-		TweetClassifying‎ classifying‎ = new SimpleTweetClassifying‎(tweetSource);
-		log.i("Linking...");
-		classifying‎.setDebug(debug);
-		
-		Collection<TweetClass> clazz = classifying‎.classify(tweetSource);
-		log.i("Classified");
-		log.i("------------------------------------");
-		for (TweetClass tweetClass : clazz) {
-			log.i(tweetClass.toString());
-		}
-		log.i("Finished!");
-		
-		
+		// log.setPrintStream(new PrintStream(new FileOutputStream("log.txt",
+		// false)));
+
+		TweetClassifying classifying = new SimpleTweetClassifying(testTweetSource, trainTweetSource);
+		log.i("Classifying...");
+		classifying.setDebug(debug);
+
 		Stopwatch stopwatch = Stopwatch.createStarted();
 
-		PrintStream tweetsFile = new PrintStream(new FileOutputStream(
-				"tweets.log", false));
-/*
-		// The factory instance is re-useable and thread safe.
-		Twitter twitter = TwitterFactory.getSingleton();
+		Collection<TweetClass> clazz = classifying.classify();
+		log.i("Classified");
+		log.i("------------------------------------");
+		/*
+		 * for (TweetClass tweetClass : clazz) { log.i(tweetClass.toString()); }
+		 */
+		log.i("Finished!");
 
-		Query query = new Query("#superbowl");
-		query.setCount(10);
+		stopwatch.elapsed(TimeUnit.MICROSECONDS);
+		log.i(stopwatch.toString());
 
-		QueryResult qr = twitter.search(query);
-		List<Status> qrTweets = qr.getTweets();
-
-		if (qrTweets.size() != 0) {
-			Collector c = new Collector(tweetsFile);
-			for (Status tweet : qrTweets) {
-				if (tweet.getText().length() > 5)
-					c.print(tweet, true);
-				// log.d(tweet.getText());
-			}
-		}
-*/
+		/*
+		 * PrintStream tweetsFile = new PrintStream(new FileOutputStream(
+		 * "tweets.log", false)); // The factory instance is re-useable and
+		 * thread safe. Twitter twitter = TwitterFactory.getSingleton();
+		 * 
+		 * Query query = new Query("#superbowl"); query.setCount(10);
+		 * 
+		 * QueryResult qr = twitter.search(query); List<Status> qrTweets =
+		 * qr.getTweets();
+		 * 
+		 * if (qrTweets.size() != 0) { Collector c = new Collector(tweetsFile);
+		 * for (Status tweet : qrTweets) { if (tweet.getText().length() > 5)
+		 * c.print(tweet, true); // log.d(tweet.getText()); } }
+		 */
 		/*
 		 * List<Status> Seahwaks = new ArrayList<Status>(); List<Status> Broncos
 		 * = new ArrayList<Status>(); List<Status> Dunno = new
@@ -132,10 +125,6 @@ public class Main {
 		 * Seahwaks.size()); log.d("Broncos: " + Broncos.size()); //
 		 */
 
-		stopwatch.elapsed(TimeUnit.MICROSECONDS);
-
-		log.d(stopwatch.toString());
-
 	}
 
 	private static void exit() {
@@ -144,8 +133,7 @@ public class Main {
 	}
 
 	private static void printHelp() {
-		System.out
-				.println("Usage:\tTwitterClassifier -f <file_name> -d [true|false]");
+		System.out.println("Usage:\tTwitterClassifier -test <test_file_name> -train <train_file_name> -debug [true|false]");
 	}
 
 }
