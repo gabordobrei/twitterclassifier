@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface TweetClassifyingAlgorithm {
 
-	public Collection<TweetClass> classify(List<List<String>> tokenizedTrainTweets, List<List<String>> tokenizedTestTweets);
+	public Collection<TweetClass> run(List<List<String>> tokenizedTrainTweets, List<List<String>> tokenizedTestTweets);
 	
 }

@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import opennlp.tools.postag.POSTagger;
 import opennlp.tools.tokenize.Tokenizer;
@@ -22,6 +23,7 @@ import opennlp.tools.util.InvalidFormatException;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Predicate;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Supplier;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
@@ -70,13 +72,17 @@ public abstract class BaseTweetClassifying implements TweetClassifying {
 			Lemmatizer lemmatizer = getLemmatizer();
 			Predicate<String> predicate = getPredicate();
 			Set<String> stopList = new HashSet<>(stoplistSupplier.get());
-			
+
+			final Stopwatch stopwatch = Stopwatch.createStarted();
+
 			/********************************************************/
 			/* Tokenize */
 			List<String[]> lines = Files.readLines(trainFile, Charsets.UTF_8, new LineProcessor<List<String[]>>() {
 				List<String[]> result = new ArrayList<String[]>();
 
 				public boolean processLine(String line) {
+					log.d("train: - " + stopwatch.toString());
+
 					result.add(tokenizer.tokenize(line));
 					return true;
 				}
@@ -86,6 +92,10 @@ public abstract class BaseTweetClassifying implements TweetClassifying {
 				}
 
 			});
+			
+			stopwatch.elapsed(TimeUnit.MICROSECONDS);
+			log.d("train: - " + stopwatch.toString());
+
 
 			for (String[] toks : lines) {
 				// String[] toks;
@@ -117,7 +127,7 @@ public abstract class BaseTweetClassifying implements TweetClassifying {
 							if (lemmatizer.lemmatize()) {
 								word = lemmatizer.getCurrent();
 								if (debug) {
-									log.d(MessageFormat.format("Stemming: {0} -> {1}", toks[i], word));
+									//log.d(MessageFormat.format("Stemming: {0} -> {1}", toks[i], word));
 								}
 							}
 						}
@@ -126,7 +136,7 @@ public abstract class BaseTweetClassifying implements TweetClassifying {
 				}
 				tokenizedTrainTweets.add(nounsInLine);
 			}
-			
+
 			/********************************************************/
 			/* Tokenize */
 			lines = Files.readLines(testFile, Charsets.UTF_8, new LineProcessor<List<String[]>>() {
@@ -142,6 +152,8 @@ public abstract class BaseTweetClassifying implements TweetClassifying {
 				}
 
 			});
+			stopwatch.elapsed(TimeUnit.MICROSECONDS);
+			log.i("test: - " + stopwatch.toString());
 
 			for (String[] toks : lines) {
 				// String[] toks;
@@ -184,7 +196,6 @@ public abstract class BaseTweetClassifying implements TweetClassifying {
 			}
 			/********************************************************/
 
-			
 			/* Classifying */
 			for (List<String> nounsInLine : tokenizedTrainTweets) {
 				log.d("---");
@@ -200,7 +211,8 @@ public abstract class BaseTweetClassifying implements TweetClassifying {
 			}
 
 			Collection<TweetClass> clazz = new ArrayList<>();
-			clazz = classifyingAlgorithm.classify(tokenizedTrainTweets, tokenizedTestTweets);
+			// clazz = classifyingAlgorithm.run(tokenizedTrainTweets,
+			// tokenizedTestTweets);
 
 			/* Wohohoho! We're done! */
 			return clazz;
