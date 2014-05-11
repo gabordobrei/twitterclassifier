@@ -1,7 +1,7 @@
 package hu.bme.tmit.twitterclassifier.classifying;
 
-import hu.bme.tmit.twitterclassifier.classalg.DummyTweetClassifyingAlgorithm;
 import hu.bme.tmit.twitterclassifier.classalg.TweetClassifyingAlgorithm;
+import hu.bme.tmit.twitterclassifier.classalg.WekaWrapperTweetClassifiyingAlgorithm;
 import hu.bme.tmit.twitterclassifier.lemmatizer.Lemmatizer;
 import hu.bme.tmit.twitterclassifier.lemmatizer.SnowballStemmerWrapper;
 import hu.bme.tmit.twitterclassifier.sanitizer.DefaultSanitezer;
@@ -26,6 +26,7 @@ import org.tartarus.snowball.ext.englishStemmer;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.primitives.Ints;
 
 public class SimpleTweetClassifying extends BaseTweetClassifying {
 
@@ -41,7 +42,7 @@ public class SimpleTweetClassifying extends BaseTweetClassifying {
 	@Override
 	protected Tokenizer getTokenizer() throws InvalidFormatException, IOException {
 		TokenizerModel tokenModel = null;
-		try (FileInputStream modelStream = new FileInputStream("resources\\en-token.bin")) {
+		try (FileInputStream modelStream = new FileInputStream("resources/en-token.bin")) {
 			tokenModel = new TokenizerModel(modelStream);
 		}
 		Tokenizer tokenizer = new TokenizerME(tokenModel);
@@ -59,15 +60,15 @@ public class SimpleTweetClassifying extends BaseTweetClassifying {
 		return new Predicate<String>() {
 
 			@Override
-			public boolean apply(String arg0) {
-				return arg0.length() > 2;
+			public boolean apply(String word) {
+				return !(word.length() < 3 || Ints.tryParse(word) != null);
 			}
 		};
 	}
 
 	@Override
 	protected TweetClassifyingAlgorithm getTweetClassifyingAlgorithm() {
-		return new DummyTweetClassifyingAlgorithm();
+		return new WekaWrapperTweetClassifiyingAlgorithm();
 	}
 
 	@Override
@@ -78,7 +79,7 @@ public class SimpleTweetClassifying extends BaseTweetClassifying {
 	@Override
 	protected POSTagger getPosTagger() throws FileNotFoundException, IOException {
 		POSModel posmodel = null;
-		try (FileInputStream modelStream = new FileInputStream("resources\\en-pos-maxent.bin")) {
+		try (FileInputStream modelStream = new FileInputStream("resources/en-pos-maxent.bin")) {
 			posmodel = new POSModel(modelStream);
 		}
 		POSTaggerME tagger = new POSTaggerME(posmodel);

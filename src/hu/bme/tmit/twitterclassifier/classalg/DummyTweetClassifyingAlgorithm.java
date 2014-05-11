@@ -1,31 +1,18 @@
 package hu.bme.tmit.twitterclassifier.classalg;
 
-import hu.bme.tmit.twitterclassifier.TweetClass;
-
-import java.util.Collection;
 import java.util.List;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 
 public class DummyTweetClassifyingAlgorithm implements TweetClassifyingAlgorithm {
 
 	@Override
-	public Collection<TweetClass> run(List<List<String>> tokenizedTrainTweets,
-			List<List<String>> tokenizedTestTweets) {
-		
-		return Collections2.transform(tokenizedTrainTweets, new Function<List<String>, TweetClass>() {
+	public double[] run(List<List<String>> tokenizedTrainTweets, List<List<String>> tokenizedTestTweets) {
 
-			/**
-			 * http://ianma.wordpress.com/2010/01/16/weka-with-java-eclipse-getting-started/
-			 */
-			
-			@Override
-			public TweetClass apply(List<String> strList) {
-				return strList.size() > 3 ? new TweetClass("Broncos", "mert hosszú") : new TweetClass("Seahowks",
-						"mert rövid");
-			}
-		});
+		/**
+		 * http://ianma.wordpress.com/2010/01/16/weka-with-java-eclipse-getting-
+		 * started/
+		 */
+
+		return null;
 	}
 
 }

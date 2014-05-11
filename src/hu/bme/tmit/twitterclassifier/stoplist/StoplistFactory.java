@@ -12,7 +12,7 @@ public class StoplistFactory implements Supplier<List<String>> {
 	@Override
 	public List<String> get() {
 		try {
-			return Files.readLines(new File("resources\\stopwords_en.txt"), Charsets.UTF_8);
+			return Files.readLines(new File("resources/stopwords_en.txt"), Charsets.UTF_8);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
