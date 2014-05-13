@@ -2,6 +2,7 @@ package hu.bme.tmit.twitterclassifier.classalg;
 
 import hu.bme.tmit.twitterclassifier.logger.Logger;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class WekaWrapperTweetClassifiyingAlgorithm implements TweetClassifyingAl
 		int[] classCounts = { 0, 0, 0, 0 };
 		double fullCount = 0.0;
 		double[] decision = new double[4];
-
+		int idx = 0;
 		for (List<String> tweet : tokenizedTestTweets) {
 			/** tweetenként nézzük **/
 
@@ -66,6 +67,10 @@ public class WekaWrapperTweetClassifiyingAlgorithm implements TweetClassifyingAl
 
 			for (int i = 0; i < decision.length; i++) {
 				if (Double.compare(decision[i], m) == 0) {
+
+					// System.err.println(MessageFormat.format("{0}: {1}->{2} ({3})",
+					// ++idx, idx / 25, i, tweet.toString()));
+					System.err.println(MessageFormat.format("{0}", i));
 					classCounts[i]++;
 				}
 			}
