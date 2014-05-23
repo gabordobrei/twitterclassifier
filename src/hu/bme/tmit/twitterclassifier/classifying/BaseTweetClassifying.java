@@ -71,6 +71,7 @@ public abstract class BaseTweetClassifying implements TweetClassifying {
 			log.i("train data read in " + stopwatch.toString());
 			log.d("------------------------------------");
 			stopwatch.stop();
+			stopwatch.reset();
 			stopwatch.start();
 			/* Filter */
 			tokenizedTrainTweets = filter(lines);
